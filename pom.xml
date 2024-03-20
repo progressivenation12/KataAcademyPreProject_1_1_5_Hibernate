@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.example</groupId>
-    <artifactId>TaskJDBC</artifactId>
+    <artifactId>Task_1_1_4_JDBC</artifactId>
     <version>1.0-SNAPSHOT</version>
     <build>
         <plugins>
@@ -21,8 +21,7 @@
     </build>
 
     <dependencies>
-<!--         Ваши зависимости-->
-         <!-- https://mvnrepository.com/artifact/junit/junit -->
+
          <dependency>
              <groupId>junit</groupId>
              <artifactId>junit</artifactId>
@@ -33,7 +32,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.25</version>
+            <version>8.0.33</version>
         </dependency>
 
         <dependency>
