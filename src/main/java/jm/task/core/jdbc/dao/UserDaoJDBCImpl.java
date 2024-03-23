@@ -52,10 +52,16 @@ public class UserDaoJDBCImpl implements UserDao {
         }
     }
 
+    // PreparedStatement предпочтительнее использовать при параметризованных запросах,
+    // так как это повышает безопасность (нет необходимости конкатенировать строку запроса с параметрами),
+    // производительность
+    // (preparedStatement компилируется один раз и может использоваться многократно,
+    // в нашем случае используется один раз при удалении по id),
+    // читаемость кода
     public void removeUserById(long id) {
-        String removeByID = "DELETE FROM user WHERE id = " + id;
-        try (Statement statement = connection.createStatement()) {
-            statement.executeUpdate(removeByID);
+        String removeByID = "DELETE FROM user WHERE id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(removeByID)) {
+            preparedStatement.setLong(1, id);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
