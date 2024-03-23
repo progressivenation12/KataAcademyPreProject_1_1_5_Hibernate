@@ -62,6 +62,7 @@ public class UserDaoJDBCImpl implements UserDao {
     // читаемость кода
     public void removeUserById(long id) {
         String removeByID = "DELETE FROM user WHERE id = ?";
+
         try (PreparedStatement preparedStatement = connection.prepareStatement(removeByID)) {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
@@ -72,8 +73,10 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
+        String getUser = "SELECT name, lastname, age FROM user";
+
         try (Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery("SELECT name, lastname, age FROM user");
+            ResultSet resultSet = statement.executeQuery(getUser);
 
             while (resultSet.next()) {
                 User user = new User(resultSet.getString(1), resultSet.getString(2), resultSet.getByte(3));
