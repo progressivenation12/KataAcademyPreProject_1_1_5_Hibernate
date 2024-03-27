@@ -16,11 +16,12 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void createUsersTable() {
         String createTable = """
-                CREATE TABLE IF NOT EXISTS user (
-                id INT PRIMARY KEY AUTO_INCREMENT,
+                CREATE TABLE IF NOT EXISTS users (
+                id INT NOT NULL AUTO_INCREMENT,
                 name VARCHAR(100) NOT NULL,
                 lastname VARCHAR(100) NOT NULL,
-                age INT(150) NOT NULL)
+                age INT(150) NOT NULL,
+                PRIMARY KEY (id))
                 """;
 
         try (Statement statement = connection.createStatement()) {
@@ -31,7 +32,7 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void dropUsersTable() {
-        String dropTable = "DROP TABLE IF EXISTS user";
+        String dropTable = "DROP TABLE IF EXISTS users";
 
         try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(dropTable);
@@ -41,9 +42,9 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void saveUser(String name, String lastName, byte age) {
-        String saveData = "INSERT INTO user(name, lastname, age) VALUES (?, ?, ?)";
+        String saveData = "INSERT INTO users(name, lastname, age) VALUES (?, ?, ?)";
 
-        try (PreparedStatement preparedStatement = Util.getConnection().prepareStatement(saveData)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(saveData)) {
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, lastName);
             preparedStatement.setByte(3, age);
@@ -61,7 +62,7 @@ public class UserDaoJDBCImpl implements UserDao {
     // в нашем случае используется один раз при удалении по id),
     // читаемость кода
     public void removeUserById(long id) {
-        String removeByID = "DELETE FROM user WHERE id = ?";
+        String removeByID = "DELETE FROM users WHERE id = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(removeByID)) {
             preparedStatement.setLong(1, id);
@@ -73,13 +74,14 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
-        String getUser = "SELECT name, lastname, age FROM user";
+        String getUser = "SELECT id, name, lastname, age FROM users";
 
         try (Statement statement = connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery(getUser);
 
             while (resultSet.next()) {
-                User user = new User(resultSet.getString(1), resultSet.getString(2), resultSet.getByte(3));
+                User user = new User(resultSet.getString("name"), resultSet.getString("lastname"), resultSet.getByte("age"));
+                user.setId(resultSet.getLong("id"));
                 users.add(user);
             }
         } catch (SQLException e) {
@@ -89,7 +91,7 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void cleanUsersTable() {
-        String cleanTable = "TRUNCATE TABLE user";
+        String cleanTable = "TRUNCATE TABLE users";
 
         try (Statement statement = connection.createStatement()) {
             statement.execute(cleanTable);
